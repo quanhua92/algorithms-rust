@@ -1,3 +1,16 @@
+/// Searches for the first occurence of an element in a list using the linear search algorithm.
+/// Returns the position with [`Option<usize>`]
+/// or [`None`] if can not find the element.
+///
+/// # Examples
+/// ```
+/// use algorithms::search::linear_search;
+/// assert_eq!(linear_search(&"a", &["a", "b", "c", "d"]), Some(0));
+/// assert_eq!(linear_search(&"", &["a", "b", "c", "d"]), None);
+///
+/// assert_eq!(linear_search(&5, &[1, 2, 3, 4, 5]), Some(4));
+/// assert_eq!(linear_search(&-1, &[1, 2, 3, 4, 5]), None);
+/// ```
 pub fn linear_search<T: PartialEq>(value: &T, arr: &[T]) -> Option<usize> {
     for (idx, elem) in arr.iter().enumerate() {
         if elem == value {
