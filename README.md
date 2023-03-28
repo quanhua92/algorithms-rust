@@ -13,3 +13,4 @@ Common data structures and algorithms in Rust.
 
 - [Bubble Sort](src/sort/bubble_sort.rs)
 - [Selection Sort](src/sort/selection_sort.rs)
+- [Insertion Sort](src/sort/insertion_sort.rs)
