@@ -14,22 +14,20 @@ use core::cmp::Ord;
 /// assert_eq!(binary_search(&-1, &[]), None);
 /// ```
 pub fn binary_search<T: Ord>(value: &T, arr: &[T]) -> Option<usize> {
-    if arr.is_empty() {
-        return None;
-    }
-    let mut left = 0;
-    let mut right = arr.len() - 1;
+    // Use range [left, right)
+    // 1. avoid usize overflow when calculate right = mid - 1 with mid = 0
+    // 2. not need check for empty array
 
-    while left <= right {
+    let mut left = 0;
+    let mut right = arr.len();
+
+    while left < right {
         let mid = (right + left) / 2;
         match arr[mid].cmp(&value) {
             std::cmp::Ordering::Equal => return Some(mid),
             std::cmp::Ordering::Less => left = mid + 1,
             std::cmp::Ordering::Greater => {
-                if mid == 0 {
-                    return None;
-                }
-                right = mid - 1;
+                right = mid;
             }
         }
     }
