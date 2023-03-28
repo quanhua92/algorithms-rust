@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["bubble_sort","Sort a list using the bubble sort algorithm."],["insertion_sort","Sort a list using the insertion sort algorithm."],["selection_sort","Sort a list using the selection sort algorithm."]]};
