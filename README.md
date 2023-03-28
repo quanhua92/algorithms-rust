@@ -2,6 +2,8 @@
 
 Common data structures and algorithms in Rust.
 
+[Documentation](https://quanhua92.github.io/algorithms-rust/)
+
 ## Contents
 
 ### [Search](src/search/)
