@@ -12,3 +12,4 @@ Common data structures and algorithms in Rust.
 ### [Sort](src/sort/)
 
 - [Bubble Sort](src/sort/bubble_sort.rs)
+- [Selection Sort](src/sort/selection_sort.rs)
