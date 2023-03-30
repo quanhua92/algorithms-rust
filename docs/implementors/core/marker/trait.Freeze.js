@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"algorithms":[["impl&lt;T&gt; Freeze for <a class=\"struct\" href=\"algorithms/data_structures/struct.LinkedList.html\" title=\"struct algorithms::data_structures::LinkedList\">LinkedList</a>&lt;T&gt;",1,["algorithms::data_structures::linked_list::LinkedList"]]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

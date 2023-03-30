@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["search",""],["sort",""]]};
+window.SIDEBAR_ITEMS = {"mod":[["data_structures",""],["search",""],["sort",""]]};

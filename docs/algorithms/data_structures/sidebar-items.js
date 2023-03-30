@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["LinkedList","Linked List with generic type"]]};
