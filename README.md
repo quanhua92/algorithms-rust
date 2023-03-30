@@ -6,6 +6,10 @@ Common data structures and algorithms in Rust.
 
 ## Contents
 
+### [Data Structure](src/data_structures/)
+
+- [Singly Linked List](src/data_structures/linked_list.rs)
+
 ### [Search](src/search/)
 
 - [Linear Search](src/search/linear_search.rs)
