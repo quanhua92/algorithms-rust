@@ -14,9 +14,22 @@ struct Node<T> {
 /// ```
 /// use algorithms::data_structures::LinkedList;
 /// let mut list = LinkedList::<String>::new();
-/// list.insert_last("hello".to_string());
+/// list.insert_first("hello".to_string());
+/// list.insert_last("world".to_string());
+/// assert_eq!(list.length, 2);
 /// if let Some(value) = list.get_first() {
 ///     assert_eq!(value, "hello")
+/// }
+/// let r = list.remove_ith(1);
+/// assert_eq!(r, Some("world".to_string()));
+/// assert_eq!(list.length, 1);
+///
+/// let r = list.remove_ith(0);
+/// assert_eq!(r, Some("hello".to_string()));
+/// assert_eq!(list.length, 0);
+///
+/// if let Some(value) = list.get_first() {
+///     panic!("Do not expect to have value {value}")
 /// }
 /// ```
 #[derive(Clone)]
@@ -124,11 +137,11 @@ impl<T: Clone + Debug> LinkedList<T> {
             };
         }
 
-        match &current {
+        match current {
             None => None,
             Some(prev) => {
                 let mut prev_borrow = prev.borrow_mut();
-                match prev_borrow.next.clone() {
+                match prev_borrow.next.take() {
                     None => None,
                     Some(next) => {
                         prev_borrow.next = next.borrow().next.clone();
