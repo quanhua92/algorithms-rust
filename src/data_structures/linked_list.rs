@@ -1,4 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
+// use std::C
+use core::option::Option;
 
 type Link<T> = Option<Rc<RefCell<Node<T>>>>;
 
@@ -18,6 +20,7 @@ struct Node<T> {
 ///     assert_eq!(value, "hello")
 /// }
 /// ```
+#[derive(Clone)]
 pub struct LinkedList<T> {
     head: Link<T>,
     tail: Link<T>,
@@ -34,10 +37,7 @@ impl<T> Node<T> {
     }
 }
 
-impl<T> LinkedList<T>
-where
-    T: Clone,
-{
+impl<T: Clone> LinkedList<T> {
     // create an empty linked list
     pub fn new() -> LinkedList<T> {
         LinkedList {
@@ -55,7 +55,7 @@ where
                 self.tail = Some(node.clone());
             }
             Some(old_head) => {
-                node.as_ref().borrow_mut().next = Some(old_head.clone());
+                node.borrow_mut().next = Some(old_head.clone());
             }
         }
         self.length += 1;
@@ -71,7 +71,7 @@ where
                 self.head = Some(node.clone());
             }
             Some(old_tail) => {
-                old_tail.as_ref().borrow_mut().next = Some(node.clone());
+                old_tail.borrow_mut().next = Some(node.clone());
             }
         }
         self.length += 1;
@@ -90,9 +90,9 @@ where
         match node {
             None => None,
             Some(n) => {
-                let node_ref = n.as_ref().borrow();
+                let node_ref = n.borrow();
                 match index {
-                    0 => Some(node_ref.clone().value),
+                    0 => Some(node_ref.value.clone()),
                     _ => Self::get_ith(&node_ref.next, index - 1),
                 }
             }
@@ -101,22 +101,59 @@ where
 
     pub fn remove_first(&mut self) -> Option<T> {
         if let Some(old_head) = self.head.take() {
-            let old_head = old_head.as_ref().borrow().clone();
-            match old_head.next {
+            let old_head = old_head.borrow();
+            match &old_head.next {
                 None => self.tail = None,
-                Some(next_ptr) => self.head = Some(next_ptr),
+                Some(next_ptr) => self.head = Some(next_ptr.clone()),
             }
             self.length -= 1;
-            return Some(old_head.value);
+            return Some(old_head.value.clone());
         }
         None
+    }
+}
+
+pub struct ListIterator<T> {
+    current: Link<T>,
+}
+
+impl<T: Clone> IntoIterator for LinkedList<T> {
+    type Item = T;
+    type IntoIter = ListIterator<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        ListIterator::new(self.head.clone())
+    }
+}
+
+impl<T> ListIterator<T> {
+    fn new(start_at: Link<T>) -> ListIterator<T> {
+        ListIterator { current: start_at }
+    }
+}
+
+impl<T: Clone> Iterator for ListIterator<T> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<T> {
+        let current = &self.current;
+        let mut result = None;
+        self.current = match current {
+            None => None,
+            Some(ref current) => {
+                let current = current.borrow();
+                result = Some(current.value.clone());
+                current.next.clone()
+            }
+        };
+        result
     }
 }
 
 #[cfg(test)]
 mod tests {
 
-    use super::LinkedList;
+    use super::{LinkedList, ListIterator};
 
     #[test]
     fn insert_first_ints() {
@@ -212,6 +249,20 @@ mod tests {
         match list.get_first() {
             None => panic!("Expect to have value at head"),
             Some(value) => assert_eq!(value, "hello"),
+        }
+    }
+
+    #[test]
+    fn test_iterator() {
+        let mut list = LinkedList::<String>::new();
+        list.insert_last("hello".to_string());
+        list.insert_last("world".to_string());
+
+        let values: Vec<String> = ListIterator::new(list.head.clone()).collect();
+        assert_eq!(values, vec!["hello", "world"]);
+
+        for v in list {
+            assert!(v == "hello" || v == "world");
         }
     }
 }
