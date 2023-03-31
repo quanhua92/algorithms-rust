@@ -82,11 +82,11 @@ where
         self.get(0)
     }
 
-    pub fn get(&self, index: i32) -> Option<T> {
+    pub fn get(&self, index: u64) -> Option<T> {
         Self::get_ith(&self.head, index)
     }
 
-    fn get_ith(node: &Link<T>, index: i32) -> Option<T> {
+    fn get_ith(node: &Link<T>, index: u64) -> Option<T> {
         match node {
             None => None,
             Some(n) => {
@@ -150,6 +150,8 @@ mod tests {
         list.insert_last(4); // 3 1 2 4
         list.insert_first(5); // 5 3 1 2 4
 
+        assert_eq!(list.length, 5);
+
         match list.get_first() {
             None => panic!("Expect to have value"),
             Some(value) => assert_eq!(value, 5),
@@ -199,6 +201,7 @@ mod tests {
         if let Some(value) = list.get(0) {
             panic!("Do not expect to have value {value}")
         }
+        assert_eq!(list.length, 0);
     }
 
     #[test]
