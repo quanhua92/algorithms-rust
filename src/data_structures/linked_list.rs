@@ -1,6 +1,5 @@
+use std::fmt::Debug;
 use std::{cell::RefCell, rc::Rc};
-// use std::C
-use core::option::Option;
 
 type Link<T> = Option<Rc<RefCell<Node<T>>>>;
 
@@ -37,7 +36,7 @@ impl<T> Node<T> {
     }
 }
 
-impl<T: Clone> LinkedList<T> {
+impl<T: Clone + Debug> LinkedList<T> {
     // create an empty linked list
     pub fn new() -> LinkedList<T> {
         LinkedList {
@@ -111,6 +110,35 @@ impl<T: Clone> LinkedList<T> {
         }
         None
     }
+
+    pub fn remove_ith(&mut self, index: u64) -> Option<T> {
+        if index == 0 {
+            return self.remove_first();
+        }
+
+        let mut current: Link<T> = self.head.clone();
+        for _ in 0..index - 1 {
+            current = match current {
+                None => None,
+                Some(x) => x.borrow().next.clone(),
+            };
+        }
+
+        match &current {
+            None => None,
+            Some(prev) => {
+                let mut prev_borrow = prev.borrow_mut();
+                match prev_borrow.next.clone() {
+                    None => None,
+                    Some(next) => {
+                        prev_borrow.next = next.borrow().next.clone();
+                        self.length -= 1;
+                        Some(next.borrow().value.clone())
+                    }
+                }
+            }
+        }
+    }
 }
 
 pub struct ListIterator<T> {
@@ -140,7 +168,7 @@ impl<T: Clone> Iterator for ListIterator<T> {
         let mut result = None;
         self.current = match current {
             None => None,
-            Some(ref current) => {
+            Some(current) => {
                 let current = current.borrow();
                 result = Some(current.value.clone());
                 current.next.clone()
@@ -253,7 +281,46 @@ mod tests {
     }
 
     #[test]
-    fn test_iterator() {
+    fn remove_ith() {
+        let mut list = LinkedList::<i32>::new();
+        list.insert_last(1);
+        list.insert_last(2);
+        list.insert_last(3);
+        list.insert_last(4); // 1 2 3 4
+
+        let r = list.remove_ith(2); // 1 2 4
+        assert_eq!(r, Some(3));
+
+        match list.get(2) {
+            None => panic!("Expect to have value"),
+            Some(value) => assert_eq!(value, 4),
+        }
+
+        let r = list.remove_ith(1); // 1 4
+        assert_eq!(r, Some(2));
+
+        match list.get(1) {
+            None => panic!("Expect to have value"),
+            Some(value) => assert_eq!(value, 4),
+        }
+
+        let r = list.remove_ith(1); // 1
+        assert_eq!(r, Some(4));
+        if let Some(value) = list.get(1) {
+            panic!("Do not expect to have value {value}")
+        }
+
+        let r = list.remove_ith(0); // empty
+        assert_eq!(r, Some(1));
+        assert_eq!(list.length, 0);
+
+        if let Some(value) = list.get(0) {
+            panic!("Do not expect to have value {value}")
+        }
+    }
+
+    #[test]
+    fn into_iterator() {
         let mut list = LinkedList::<String>::new();
         list.insert_last("hello".to_string());
         list.insert_last("world".to_string());
