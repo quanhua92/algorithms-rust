@@ -45,4 +45,10 @@ mod tests {
         bubble_sort(&mut arr);
         assert_eq!(arr, []);
     }
+    #[test]
+    fn sort_random() {
+        let mut arr = [5, 1, 2, 3, 4, 6];
+        bubble_sort(&mut arr);
+        assert_eq!(arr, [1, 2, 3, 4, 5, 6]);
+    }
 }
